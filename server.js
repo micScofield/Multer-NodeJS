@@ -1,10 +1,13 @@
 const path = require('path')
 const fs = require('fs')
 const express = require('express')
+const bodyParser = require('body-parser')
 const { upload } = require('./multer-storage/multer-storage-config')
 const PDFDocument = require('pdfkit')
 
 const app = express()
+
+app.use(bodyParser.urlencoded({ extended: false }))
 
 //Follow this exact syntax to setup EJS
 app.set('view engine', 'ejs')
@@ -19,7 +22,7 @@ app.get('/', (req, res) => {
     res.render('index')
 })
 
-app.get('/invoice/:dest', (req, res) => {
+app.get('/invoice/:param', (req, res) => {
     /*
         Steps 1. Fetch some parameter and find related details from the database which is required in invoice
         2. Set invoice name
@@ -27,7 +30,7 @@ app.get('/invoice/:dest', (req, res) => {
         4. Set response header to application/pdf
         5. See documentation for various properties
     */
-    const id = req.params.dest
+    const id = req.params.param
     const invoiceName = 'invoice-' + id + '.pdf'
     const invoicePath = path.join('data', 'invoices', invoiceName)
 
@@ -43,6 +46,21 @@ app.get('/invoice/:dest', (req, res) => {
         underline: true
     })
     pdfDoc.fontSize(16).text('Some Dummy Invoice Data')
+
+    const pathToImage = path.join(__dirname, 'public', req.query.path)
+
+    pdfDoc.image(pathToImage, {
+        fit: [250, 300],
+        align: 'center',
+        valign: 'center'
+    })
+
+    pdfDoc
+        .addPage()
+        .fillColor('blue')
+        .text('Here is a link!', 100, 100)
+        .underline(100, 100, 160, 27, { color: '#0000FF' })
+        .link(100, 100, 160, 27, 'http://google.com/');
     pdfDoc.end()
 })
 

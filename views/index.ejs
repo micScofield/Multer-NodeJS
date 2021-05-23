@@ -31,6 +31,7 @@
       </form><br>
       <% if(typeof file !== 'undefined') { %>
         <form action="/invoice/1" method="GET" target="_blank">
+          <input type="hidden" name="path" value="<%= file %>">
           <button class="btn">Get Invoice For Your Submission</button>
         </form>
       <% } %>
