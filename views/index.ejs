@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-    />
 
-    <title>File-Upload</title>
-  </head>
-  <body>
-    <div class="container">
-      <h1>File Upload</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 
-      <!-- EJS syntax -->
-      <%= typeof msg !== 'undefined' ? msg : ''%>
+  <title>File-Upload</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>File Upload</h1>
+
+    <!-- EJS syntax -->
+    <%= typeof msg !=='undefined' ? msg : '' %>
 
       <form action="/upload" method="POST" enctype="multipart/form-data">
         <div class="file-field input-field">
@@ -29,18 +28,22 @@
           </div>
         </div>
         <button type="submit" class="btn">Submit</button>
-      </form>
+      </form><br>
+      <% if(typeof file !== 'undefined') { %>
+        <form action="/invoice/1" method="GET" target="_blank">
+          <button class="btn">Get Invoice For Your Submission</button>
+        </form>
+      <% } %>
       <br />
-      <img src="<%= typeof file !== 'undefined' ? file : ''%>" class="responsive-img" />
-    </div>
+      <img src="<%= typeof file !== 'undefined' ? file : '' %>" class="responsive-img" />
 
-    <!-- Jquery CDN 3 minified to use materialize JS -->
-    <script
-      src="https://code.jquery.com/jquery-3.6.0.min.js"
-      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-      crossorigin="anonymous"
-    ></script>
-    <!-- Materialize JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  </body>
+  </div>
+
+  <!-- Jquery CDN 3 minified to use materialize JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+
 </html>
