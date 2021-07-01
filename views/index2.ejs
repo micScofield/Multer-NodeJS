@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+
+  <title>File-Upload</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>File Upload</h1>
+
+    <!-- EJS syntax -->
+    <%= typeof msg !=='undefined' ? msg : '' %>
+
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        <div class="file-field input-field">
+          <div class="btn grey">
+            <span>File</span>
+            <input type="file" name="myImage" />
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text" />
+          </div>
+        </div>
+        <button type="submit" class="btn">Submit</button>
+      </form><br>
+      <% if(typeof file !=='undefined' ) { %>
+        <form action="/invoice/1" method="GET" target="_blank">
+          <input type="hidden" name="path" value="<%= file %>">
+          <button class="btn">Get Invoice For Your Submission</button>
+        </form>
+        <% } %>
+          <br />
+          <img src="<%= typeof file !== 'undefined' ? file : '' %>" class="responsive-img" />
+
+          <% if(typeof files !=='undefined' ) { %>
+            <% if(files) { %>
+              <h1>Uploaded Images</h1>
+              <div>
+                <% files.forEach(function(image) { %>
+                  <div>
+                    <div>
+                      <img src="data:image/<%=image.img.contentType%>;base64,
+                       <%=image.img.data.toString('base64')%>" class="responsive-img" >
+                      <div>
+                        <h5>
+                          <%= image.name %>
+                        </h5>
+
+                        <p>
+                          <%= image.desc %>
+                        </p>
+
+                      </div>
+                    </div>
+                  </div>
+                  <% }) %>
+              </div>
+              <% } else { %>
+                <h3>No Images To Show</h3>
+                <% } %>
+                  <% } %>
+
+  </div>
+
+  <!-- Jquery CDN 3 minified to use materialize JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+
+</html>

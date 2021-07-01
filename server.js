@@ -4,6 +4,11 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const { upload } = require('./multer-storage/multer-storage-config')
 const PDFDocument = require('pdfkit')
+const mongoose = require('mongoose')
+require('dotenv').config()
+
+// Image Model
+const Image = require('./models/image')
 
 const app = express()
 
@@ -15,11 +20,14 @@ app.set('view engine', 'ejs')
 //Public Folder
 app.use(express.static('./public'))
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     // res.status(200).json({msg: 'Hello World'})
 
+    // reversing the search results
+    const images = await Image.find({}).sort({ _id: -1 })
+
     //To render using EJS:-
-    res.render('index')
+    res.render('index2', { files: images })
 })
 
 app.get('/invoice/:param', (req, res) => {
@@ -64,25 +72,52 @@ app.get('/invoice/:param', (req, res) => {
     pdfDoc.end()
 })
 
+//This is the route we passed to action tag inside form
 app.post('/upload', (req, res) => {
-    //This is the route we passed to action tag inside form
-    upload(req, res, (err) => {
+    upload(req, res, async (err) => {
         if (err) res.render('index', { msg: err }) //we specified msg variable inside EJS error handling
         else {
-            // console.log(req.file) to see what fields we receive
             if (req.file === undefined) res.render('index', { msg: 'Please select an image !' })
             else {
                 console.log(req.file)
-                res.render('index', {
+
+                // Store in DB if necessary and clear from filesystem
+                const imageObj = new Image({
+                    name: req.file.filename,
+                    desc: 'Profile Image',
+                    img: {
+                        data: fs.readFileSync(path.join(__dirname + '/public/uploads/' + req.file.filename)),
+                        contentType: 'image/png'
+                    }
+                })
+
+                const savedRes = await imageObj.save()
+                console.log(savedRes)
+
+                res.render('index2', {
                     msg: 'File Uploaded !',
                     file: `uploads/${req.file.filename}`
+                    // file: savedRes.img // do base64 encoding in view if you dont need above field
                 })
             }
         }
     })
 })
 
-
 const PORT = process.env.PORT || 5000
+
+const connectDB = async (req, res, next) => {
+    try {
+        await mongoose.connect(
+            process.env.MONGO_URI, 
+            {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false}, 
+            console.log('db connected')
+        )
+    } catch (error) {
+        console.log('Connection to DB failed')
+    }
+}
+
+connectDB()
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
